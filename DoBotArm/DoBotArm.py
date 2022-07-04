@@ -41,6 +41,7 @@ class DoBotArm:
         self.home_time = 0
         self.dobotConnect(home)
         self.lastIndex = 0
+        self.rotation = self.getPosition()[3]
 
     def __del__(self):
         self.dobotDisconnect()
@@ -129,6 +130,7 @@ class DoBotArm:
         position = self.getPosition()
         return self.moveArmXYZ(positions[0] + xrel, positions[1] + yrel, positions[2] + zrel, wait)
     
+    
     # By passing on None as a coordinate parameter, the current arm position in givven axis will be used
     def moveArmXYZ(self,x,y, z, wait = True):
         if(x == None or y == None or z == None):
@@ -139,7 +141,7 @@ class DoBotArm:
                 y = position[1]
             if(z == None):
                 z = position[2]
-        self.lastIndex = dType.SetPTPCmd(self.api, dType.PTPMode.PTPMOVLXYZMode, x, y, z, 0)[0]
+        self.lastIndex = dType.SetPTPCmd(self.api, dType.PTPMode.PTPMOVLXYZMode, x, y, z, self.rotation)[0]
         if(wait):
             self.commandDelay(self.lastIndex)
         return self.lastIndex
@@ -147,10 +149,13 @@ class DoBotArm:
     def SetConveyor(self, enabled, speed):
         self.lastIndex = dType.SetEMotor(self.api, 0, enabled, speed, isQueued = 1)
         
+    def RotateHead(self, rotation, wait = True):
+        self.rotation = rotation
+        self.moveArmRelXYZ(0, 0, 0, wait)
 
     #Returns to home location
     def moveHome(self, wait = True):
-        self.lastIndex = dType.SetPTPCmd(self.api, dType.PTPMode.PTPMOVLXYZMode, self.homeX, self.homeY, self.homeZ, 0)[0]
+        self.lastIndex = dType.SetPTPCmd(self.api, dType.PTPMode.PTPMOVLXYZMode, self.homeX, self.homeY, self.homeZ, self.rotation)[0]
         if(wait):
             self.commandDelay(self.lastIndex)
         return self.lastIndex
@@ -160,10 +165,10 @@ class DoBotArm:
         lastIndex = 0
         positions = self.getPosition()
         if(self.picking):
-            self.lastIndex = dType.SetPTPCmd(self.api, dType.PTPMode.PTPMOVLXYZMode, positions[0], positions[1], self.homeZ, 0)[0]
+            self.lastIndex = dType.SetPTPCmd(self.api, dType.PTPMode.PTPMOVLXYZMode, positions[0], positions[1], self.homeZ, self.rotation)[0]
             self.picking = False
         else:
-            self.lastIndex = dType.SetPTPCmd(self.api, dType.PTPMode.PTPMOVLXYZMode, positions[0], positions[1], itemHeight, 0)[0]
+            self.lastIndex = dType.SetPTPCmd(self.api, dType.PTPMode.PTPMOVLXYZMode, positions[0], positions[1], itemHeight, self.rotation)[0]
             self.picking = True
         if(wait):
             self.commandDelay(self.lastIndex)
