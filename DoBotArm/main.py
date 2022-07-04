@@ -6,8 +6,7 @@ import DoBotArm as Dbt
 import time
 from serial.tools import list_ports
 
-#--Main Program--
-def main():
+def port_selection():
     # Choosing port
     available_ports = list_ports.comports()
     print('Available COM-ports:')
@@ -15,11 +14,16 @@ def main():
         print(f"  {i}: {port.description}")
 
     choice = int(input('Choose port by typing a number followed by [Enter]: '))
-    port = available_ports[choice].device
+    return available_ports[choice].device
+
+#--Main Program--
+def main():
+    #List selected ports for selection
+    port = port_selection()
     
     # Preprogrammed sequence
     homeX, homeY, homeZ = 250, 0, 50
-    ctrlBot = Dbt.DoBotArm(homeX, homeY, homeZ, True) #Create DoBot Class Object with home position x,y,z
+    ctrlBot = Dbt.DoBotArm(port, homeX, homeY, homeZ, True) #Create DoBot Class Object with home position x,y,z
     print("Moving")
     ctrlBot.moveArmXY(250, 0)
     for i in range (5):
