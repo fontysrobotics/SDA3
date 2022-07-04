@@ -118,21 +118,21 @@ class DoBotArm:
     def getPosition(self):
         return dType.GetPose(self.api)
 
-    def moveArmRelXY(self, xrel, yrel, wait = True):
+    def moveArmRelXY(self, xrel, yrel, wait = True, jump = False):
         position = self.getPosition()
-        return self.moveArmXY(positions[0] + xrel, positions[1] + yrel, wait)
+        return self.moveArmXY(positions[0] + xrel, positions[1] + yrel, wait, jump)
 
     #Moves arm to X/Y/Z Location
-    def moveArmXY(self,x,y, wait = True):
-        return self.moveArmXYZ(x, y, self.homeZ)
+    def moveArmXY(self,x,y, wait = True, jump = False):
+        return self.moveArmXYZ(x, y, self.homeZ, jump)
     
-    def moveArmRelXYZ(self, xrel, yrel, zrel, wait = True):
+    def moveArmRelXYZ(self, xrel, yrel, zrel, wait = True, jump = False):
         position = self.getPosition()
-        return self.moveArmXYZ(positions[0] + xrel, positions[1] + yrel, positions[2] + zrel, wait)
+        return self.moveArmXYZ(positions[0] + xrel, positions[1] + yrel, positions[2] + zrel, wait, jump)
     
     
     # By passing on None as a coordinate parameter, the current arm position in givven axis will be used
-    def moveArmXYZ(self,x,y, z, wait = True):
+    def moveArmXYZ(self,x,y, z, wait = True, jump = False):
         if(x == None or y == None or z == None):
             position = self.getPosition()
             if(x == None):
@@ -141,6 +141,7 @@ class DoBotArm:
                 y = position[1]
             if(z == None):
                 z = position[2]
+        mode = dtype.PTPMode.PTPJUMPXYZMode if jump else dtype.PTPMode.PTPMOVLXYZMode
         self.lastIndex = dType.SetPTPCmd(self.api, dType.PTPMode.PTPMOVLXYZMode, x, y, z, self.rotation)[0]
         if(wait):
             self.commandDelay(self.lastIndex)
