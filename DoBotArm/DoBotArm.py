@@ -29,7 +29,7 @@ CON_STR = {
 
 #Main control class for the DoBot Magician.
 class DoBotArm:
-    def __init__(self, port, homeX, homeY, homeZ, home = True):
+    def __init__(self, port, homeX, homeY, homeZ, home = True, homingWait = True):
         self.suction = False
         self.picking = False
         self.api = dType.load()
@@ -39,7 +39,7 @@ class DoBotArm:
         self.homeZ = homeZ
         self.connected = False
         self.home_time = 0
-        self.dobotConnect(home)
+        self.dobotConnect(home, homingWait)
         self.lastIndex = 0
         self.rotation = self.getPosition()[3]
 
