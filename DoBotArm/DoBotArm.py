@@ -141,8 +141,8 @@ class DoBotArm:
                 y = position[1]
             if(z == None):
                 z = position[2]
-        mode = dtype.PTPMode.PTPJUMPXYZMode if jump else dtype.PTPMode.PTPMOVLXYZMode
-        self.lastIndex = dType.SetPTPCmd(self.api, dType.PTPMode.PTPMOVLXYZMode, x, y, z, self.rotation)[0]
+        mode = dType.PTPMode.PTPJUMPXYZMode if jump else dType.PTPMode.PTPMOVLXYZMode
+        self.lastIndex = dType.SetPTPCmd(self.api, mode, x, y, z, self.rotation)[0]
         if(wait):
             self.commandDelay(self.lastIndex)
         return self.lastIndex
